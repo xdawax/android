@@ -1,7 +1,9 @@
 package com.example.dawa1.geoquiz;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -31,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
+        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +78,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         updateQuestion();
+
+        logDisplayInfo();
+    }
+
+    private void logDisplayInfo() {
+        int displayInfo = getResources().getConfiguration().orientation;
+
+        if (displayInfo == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d("Orientation", "Landscape mode");
+        } else {
+            Log.d("Orientation", "Portrait mode");
+        }
 
     }
 
