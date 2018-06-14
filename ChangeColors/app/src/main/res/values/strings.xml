@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ChangeColors</string>
+    <string name="text">Random text</string>
+    <string name="change_colors">Change Color</string>
+    <string name="choose_colors">Choose Colors</string>
+    <string name="black_white">Black text, white background</string>
+    <string name="white_black">White text, black background</string>
+    <string name="blue_red">Blue text, red background</string>
+    <string name="green_blue">Green text, blue background</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_colors" />
+    <Button
+        android:id="@+id/black_whiteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/black_white" />
+    <Button
+        android:id="@+id/white_blackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/white_black" />
+    <Button
+        android:id="@+id/blue_redButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/blue_red" />
+    <Button
+        android:id="@+id/green_blueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/green_blue" />
+</LinearLayout>
