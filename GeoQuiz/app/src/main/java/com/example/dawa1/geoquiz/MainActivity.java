@@ -82,11 +82,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
+
         updateQuestion();
         logDisplayInfo();
 
@@ -95,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        Log.i(TAG, "in onSaveInstanceState - Saving UI state");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
