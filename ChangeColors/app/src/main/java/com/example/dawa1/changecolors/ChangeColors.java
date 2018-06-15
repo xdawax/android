@@ -1,5 +1,7 @@
 package com.example.dawa1.changecolors;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +28,7 @@ public class ChangeColors extends AppCompatActivity {
         mBlackWhiteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                setResult(Color.BLACK, Color.WHITE);
             }
         });
 
@@ -34,7 +36,7 @@ public class ChangeColors extends AppCompatActivity {
         mWhiteBlackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                setResult(Color.WHITE, Color.BLACK);
             }
         });
 
@@ -42,7 +44,7 @@ public class ChangeColors extends AppCompatActivity {
         mBlueRedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                setResult(Color.BLUE, Color.RED);
             }
         });
 
@@ -50,8 +52,18 @@ public class ChangeColors extends AppCompatActivity {
         mGreenBlueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                setResult(Color.GREEN, Color.BLUE);
             }
         });
+    }
+
+    private void setResult(int text, int backGround) {
+        Intent data = new Intent();
+
+        data.putExtra(EXTRA_TEXT_COLOR, text);
+        data.putExtra(EXTRA_BACK_COLOR, backGround);
+        setResult(RESULT_OK, data);
+
+        finish();
     }
 }

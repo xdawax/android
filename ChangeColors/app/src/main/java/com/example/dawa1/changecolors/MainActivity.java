@@ -1,6 +1,7 @@
 package com.example.dawa1.changecolors;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -30,5 +31,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    //@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+
+                int textColor = data.getIntExtra(ChangeColors.EXTRA_TEXT_COLOR, Color.BLACK);
+                int backColor = data.getIntExtra(ChangeColors.EXTRA_BACK_COLOR, Color.BLACK);
+
+                mTextView.setTextColor(textColor);
+                mView.setBackgroundColor(backColor);
+            }
+        }
     }
 }
