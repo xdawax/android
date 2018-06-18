@@ -6,6 +6,8 @@
     <string name="false_button">False</string>
     <string name="next_button">Next</string>
     <string name="prev_button">Prev</string>
+    <string name="cheat_button">Cheat!</string>
+    <string name="return_button">Return</string>
 
     /* TOASTS */
     <string name="correct_toast">Correct!</string>
@@ -24,5 +26,6 @@
 
     /* MISC */
     <string name="action_settings">Settings</string>
+
 
 </resources>

@@ -1,5 +1,6 @@
 package com.example.dawa1.geoquiz;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button mTrueButton; // Kodkonvention att attribut börjar med m
     private Button mFalseButton;
+    private Button mCheatButton;
     private ImageButton mNextButton;
     private ImageButton mPrevButton;
 
@@ -27,10 +29,13 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true)
     };
 
-    private final String TAG = "MainActivity";
-    private final String KEY_INDEX = "index";
+    public static final String TAG = "MainActivity";
+    public static final String KEY_INDEX = "index";
+    public static final String CHEATED_INDEX = "cheated index";
+    public static final String ANSWER = "answer";
 
     private int mCurrentIndex = 0;
+    private int mCheatedIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, CheatScreen.class);
+                i.putExtra(KEY_INDEX, getCurrentIndex());
+                i.putExtra(ANSWER, mQuestionBank[getCurrentIndex()].isAnswerTrue());
+                startActivityForResult(i, 0);
+            }
+        });
+
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,10 +108,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("onActivityResult", "Entered");
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+                Log.i("onActivityResult", ("" + mCheatedIndex));
+                mCheatedIndex = data.getIntExtra(CheatScreen.CHEATED_INDEX, -1);
+                Log.i("onActivityResult", ("" + mCheatedIndex));
+            }
+
+        }
+    }
+
+    private int getCurrentIndex() {
+        return mCurrentIndex % mQuestionBank.length;
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.i(TAG, "in onSaveInstanceState - Saving UI state");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putInt(CHEATED_INDEX, mCheatedIndex);
         super.onSaveInstanceState(outState);
     }
 
@@ -157,6 +193,12 @@ public class MainActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
         int messageResId = 0;
+        Log.i("checkAnswer", ("Cheated index:" + mCheatedIndex));
+        if (mCheatedIndex == mCurrentIndex) {
+            Toast.makeText(MainActivity.this, "Cheating is not ok!",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
