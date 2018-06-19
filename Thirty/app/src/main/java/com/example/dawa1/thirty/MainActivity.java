@@ -14,6 +14,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private int mDiceAmount = 6;
+    private int mMaxTries = 3;
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -51,12 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setButtons();
 
 
-        mRollButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                rollDice();
-            }
-        });
+
     }
 
 
@@ -82,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 setDieWhite(i, dieValue);
             }
         }
+
+        mMaxTries--;
     }
 
     private void setDieWhite(int dieIndex, int dieValue) {
@@ -141,5 +139,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setButtons() {
         mRollButton = (Button) findViewById(R.id.roll_button);
+
+        mRollButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mMaxTries > 0) {
+                    rollDice();
+                }
+            }
+        });
     }
 }
