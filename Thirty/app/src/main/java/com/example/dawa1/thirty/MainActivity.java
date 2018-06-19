@@ -5,13 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private int mDiceAmount = 6;
     private int mMaxTries = 3;
@@ -23,8 +27,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mDieFive;
     private ImageView mDieSix;
 
+    private Spinner mModeSpinner;
+
     private ArrayList<ImageView> mImageViewDice = new ArrayList<ImageView>();
     private ArrayList<Die> mDice = new ArrayList<Die>();
+    private ArrayAdapter<CharSequence> mSpinnerAdapter = ArrayAdapter.createFromResource(
+            MainActivity.this, R.array.modes, android.R.layout.simple_spinner_item);
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
                                         R.drawable.white3, R.drawable.white4,
@@ -50,12 +58,18 @@ public class MainActivity extends AppCompatActivity {
         setImageViews();
         setImageViewListeners();
         setButtons();
+        setSpinners();
 
 
 
     }
 
-
+    private void setSpinners() {
+        mModeSpinner = (Spinner) findViewById(R.id.mode_spinner);
+        mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mModeSpinner.setAdapter(mSpinnerAdapter);
+        mModeSpinner.setOnItemSelectedListener(this);
+    }
     private void createDice() {
 
         for (int i = 0; i < mDiceAmount; i++) {
@@ -148,5 +162,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String text = adapterView.getItemAtPosition(i).toString();
+        Toast.makeText(adapterView.getContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

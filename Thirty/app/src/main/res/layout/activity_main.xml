@@ -83,6 +83,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.568"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/die_five"
-        app:layout_constraintVertical_bias="0.787" />
+        app:layout_constraintTop_toBottomOf="@+id/mode_spinner" />
+
+    <Spinner
+        android:id="@+id/mode_spinner"
+        android:layout_width="320dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_score_textView" />
+
+    <TextView
+        android:id="@+id/calc_score_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Choose @android:string/selectTextMode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/die_five" />
+
 </android.support.constraint.ConstraintLayout>
