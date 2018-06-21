@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Thirty</string>
+    <string name="roll_dice">Roll Dice!</string>
+    <string name="select_mode">Select Mode</string>
+    <string name="skip_rolls">Skip Rolls!</string>
 
     <string-array name="modes">
         <item>low</item>

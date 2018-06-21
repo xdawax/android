@@ -27,12 +27,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ImageView mDieFive;
     private ImageView mDieSix;
 
+    private Button mRollButton;
+    private Button mSkipButton;
+
     private Spinner mModeSpinner;
 
     private ArrayList<ImageView> mImageViewDice = new ArrayList<ImageView>();
     private ArrayList<Die> mDice = new ArrayList<Die>();
-    private ArrayAdapter<CharSequence> mSpinnerAdapter = ArrayAdapter.createFromResource(
-            MainActivity.this, R.array.modes, android.R.layout.simple_spinner_item);
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
                                         R.drawable.white3, R.drawable.white4,
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             R.drawable.red3, R.drawable.red4,
             R.drawable.red5, R.drawable.red6};
 
-    Button mRollButton;
+
 
 
     @Override
@@ -58,18 +59,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setImageViews();
         setImageViewListeners();
         setButtons();
-        setSpinners();
-
-
-
     }
 
-    private void setSpinners() {
-        mModeSpinner = (Spinner) findViewById(R.id.mode_spinner);
-        mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mModeSpinner.setAdapter(mSpinnerAdapter);
-        mModeSpinner.setOnItemSelectedListener(this);
-    }
     private void createDice() {
 
         for (int i = 0; i < mDiceAmount; i++) {
@@ -149,11 +140,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
-
-    public void setButtons() {
+    private void setButtons() {
         mRollButton = (Button) findViewById(R.id.roll_button);
-
         mRollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,16 +150,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         });
+
+        mSkipButton = (Button) findViewById(R.id.skip_roll_button);
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Gör en knapp för att bekräfta
+                mMaxTries = 0;
+            }
+        });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String text = adapterView.getItemAtPosition(i).toString();
-        Toast.makeText(adapterView.getContext(), text, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
 }
