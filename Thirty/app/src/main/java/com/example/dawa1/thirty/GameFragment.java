@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
 
-    private final int mDiceAmmount = 6;
+    private final int mDiceAmount = 6;
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -52,6 +52,8 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
+
+        ThirtyGameLogic.init(mDiceAmount);
 
         mDiceImageViewList = new ArrayList<ImageView>();
         mDice = Dice.get();
@@ -91,13 +93,10 @@ public class GameFragment extends Fragment {
         mDiceImageViewList.add(5, mDieSix = (ImageView) v.findViewById(R.id.die_six));
 
         updateDice();
-
-
     }
 
     private void updateDice() {
-        // ändra till dynamisk storlek
-        for (int i = 0; i < mDiceAmmount; i++) {
+        for (int i = 0; i < mDiceAmount; i++) {
             setDieWhite(i, mDice.getDieValue(i));
         }
     }
@@ -120,6 +119,7 @@ public class GameFragment extends Fragment {
             mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    ThirtyGameLogic.changeLock(index);
                     // hantera om man valt att låsa tärningens värde
                 }
             });
