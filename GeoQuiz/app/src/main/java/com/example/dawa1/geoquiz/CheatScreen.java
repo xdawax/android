@@ -11,10 +11,10 @@ public class CheatScreen extends AppCompatActivity {
 
     public static final String CHEATED_INDEX = "cheated index";
 
-    TextView mCurrentIndex;
-    TextView mAnswer;
-    Button mCheatButton;
-    Button mReturnButton;
+    private TextView mCurrentIndex;
+    private TextView mAnswer;
+    private Button mCheatButton;
+    private Button mReturnButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
