@@ -1,35 +1,29 @@
 package com.example.dawa1.thirty;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 public class ThirtyGameLogic {
 
-    private static boolean[] sLockedDice;
+    private static Dice mDice = Dice.get(6);
+    private static int rollsLeft = 3;
 
-    public static void rollDice(Dice dice) {
-        int size = dice.getSize();
+    public static void rollDice() {
+        int size = mDice.getSize();
 
         for (int i = 0; i < size; i++) {
-            if (isUnLocked(i)) {
-                dice.rollDie(i);
+            if (mDice.isUnLocked(i)) {
+                if (rollsLeft > 0) {
+                    if (mDice.isUnLocked(i)) {
+                        mDice.rollDie(i);
+                    }
+                }
             }
         }
+        rollsLeft--;
     }
 
-    public static void changeLock(int index) {
-        sLockedDice[index] = !(sLockedDice[index]);
+    private void resetRolls() {
+        rollsLeft = 3;
     }
 
-    public static boolean isUnLocked(int index) {
-        return !(sLockedDice[index]);
-    }
-
-    public static void init(int diceAmount) {
-        sLockedDice = new boolean[diceAmount];
-
-        for (int i = 0; i < diceAmount; i++) {
-            sLockedDice[i] = false;
-        }
-    }
 }

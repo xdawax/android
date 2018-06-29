@@ -55,10 +55,8 @@ public class GameFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
-        ThirtyGameLogic.init(DICE_AMOUNT);
-
         mDiceImageViewList = new ArrayList<ImageView>();
-        mDice = Dice.get();
+        mDice = Dice.get(DICE_AMOUNT);
 
         setImageViews(v);
         setImageViewListeners(v);
@@ -72,7 +70,7 @@ public class GameFragment extends Fragment {
         mRollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    ThirtyGameLogic.rollDice(mDice);
+                    ThirtyGameLogic.rollDice();
                     updateDice();
             }
         });
@@ -99,7 +97,7 @@ public class GameFragment extends Fragment {
 
     private void updateDice() {
         for (int i = 0; i < DICE_AMOUNT; i++) {
-            if (ThirtyGameLogic.isUnLocked(i)) {
+            if (mDice.isUnLocked(i)) {
                 setDieWhite(i, mDice.getDieValue(i));
             }
             else {
@@ -126,7 +124,7 @@ public class GameFragment extends Fragment {
             mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ThirtyGameLogic.changeLock(index);
+                    mDice.changeLock(index);
                     updateDice();
                     // hantera om man valt att låsa tärningens värde
                 }
