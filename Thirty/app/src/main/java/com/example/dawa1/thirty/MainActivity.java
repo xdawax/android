@@ -1,21 +1,14 @@
 package com.example.dawa1.thirty;
 
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private int mDiceAmount = 6;
     private int mMaxTries = 3;
@@ -53,14 +46,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.fragment_game);
+/*
         createDice();
         setImageViews();
         setImageViewListeners();
         setButtons();
+  */
     }
-
+/*
     private void createDice() {
 
         for (int i = 0; i < mDiceAmount; i++) {
@@ -160,5 +154,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
     }
-
+*/
 }

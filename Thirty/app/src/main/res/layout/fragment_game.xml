@@ -16,7 +16,8 @@
         app:layout_constraintEnd_toStartOf="@+id/die_two"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/die_two"
@@ -26,7 +27,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toStartOf="@+id/die_three"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/die_three"
@@ -36,7 +38,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/die_four"
@@ -48,7 +51,8 @@
         app:layout_constraintEnd_toStartOf="@+id/die_five"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/die_one"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/die_five"
@@ -58,7 +62,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toStartOf="@+id/die_six"
         app:layout_constraintTop_toBottomOf="@+id/die_two"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/die_six"
@@ -68,7 +73,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/die_three"
-        app:srcCompat="@drawable/white1" />
+        app:srcCompat="@drawable/white1"
+        android:contentDescription="@string/todo" />
 
     <Button
         android:id="@+id/roll_button"
@@ -77,25 +83,14 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:text="@string/roll_dice"
         app:layout_constraintBottom_toTopOf="@+id/skip_roll_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.568"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mode_spinner" />
-
-    <Spinner
-        android:id="@+id/mode_spinner"
-        android:layout_width="320dp"
-        android:layout_height="36dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_score_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/calc_score_textView"
+        app:layout_constraintVertical_bias="0.945" />
 
     <TextView
         android:id="@+id/calc_score_textView"
