@@ -42,21 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void rollDice() {
 
-        int dieValue;
-        Die currentDie;
 
-        for (int i = 0; i < mDiceAmount; i++) {
-            currentDie = mDice.get(i);
-
-            if(!currentDie.isLocked()) {
-                currentDie.roll();
-                dieValue = mDice.get(i).getValue();
-                Log.i("RollDice", ("" + dieValue));
-                setDieWhite(i, dieValue);
-            }
-        }
-
-        mMaxTries--;
     }
 
 

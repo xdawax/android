@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
 
+    private final int mDiceAmmount = 6;
+
     private ImageView mDieOne;
     private ImageView mDieTwo;
     private ImageView mDieThree;
@@ -24,7 +26,7 @@ public class GameFragment extends Fragment {
     private Button mRollButton;
     private Button mSkipButton;
 
-    private ArrayList<ImageView> mImageViewDice = new ArrayList<ImageView>();
+    private ArrayList<ImageView> mDiceImageViewList;
     private Dice mDice;
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
@@ -51,6 +53,7 @@ public class GameFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
+        mDiceImageViewList = new ArrayList<ImageView>();
         mDice = Dice.get();
 
         setImageViews(v);
@@ -65,7 +68,8 @@ public class GameFragment extends Fragment {
         mRollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    // rulla tärningen
+                    ThirtyGameLogic.rollDice(mDice);
+                    updateDice();
             }
         });
 
@@ -79,37 +83,41 @@ public class GameFragment extends Fragment {
         });
     }
     private void setImageViews(View v) {
-        mImageViewDice.add(0, mDieOne = (ImageView) v.findViewById(R.id.die_one));
-        mImageViewDice.add(1, mDieTwo = (ImageView) v.findViewById(R.id.die_two));
-        mImageViewDice.add(2, mDieThree = (ImageView) v.findViewById(R.id.die_three));
-        mImageViewDice.add(3, mDieFour = (ImageView) v.findViewById(R.id.die_four));
-        mImageViewDice.add(4, mDieFive = (ImageView) v.findViewById(R.id.die_five));
-        mImageViewDice.add(5, mDieSix = (ImageView) v.findViewById(R.id.die_six));
+        mDiceImageViewList.add(0, mDieOne = (ImageView) v.findViewById(R.id.die_one));
+        mDiceImageViewList.add(1, mDieTwo = (ImageView) v.findViewById(R.id.die_two));
+        mDiceImageViewList.add(2, mDieThree = (ImageView) v.findViewById(R.id.die_three));
+        mDiceImageViewList.add(3, mDieFour = (ImageView) v.findViewById(R.id.die_four));
+        mDiceImageViewList.add(4, mDieFive = (ImageView) v.findViewById(R.id.die_five));
+        mDiceImageViewList.add(5, mDieSix = (ImageView) v.findViewById(R.id.die_six));
 
+        updateDice();
+
+
+    }
+
+    private void updateDice() {
         // ändra till dynamisk storlek
-        for (int i = 0; i < 6; i++) {
-            mDice.rollDie(i);
+        for (int i = 0; i < mDiceAmmount; i++) {
             setDieWhite(i, mDice.getDieValue(i));
         }
-
     }
 
-    private void setDieWhite(int dieIndex, int dieValue) {
-        mImageViewDice.get(dieIndex).setImageResource(mWhiteDice[dieValue-1]);
+    public void setDieWhite(int dieIndex, int dieValue) {
+        mDiceImageViewList.get(dieIndex).setImageResource(mWhiteDice[dieValue-1]);
     }
 
-    private void setDieGrey(int dieIndex, int dieValue) {
-        mImageViewDice.get(dieIndex).setImageResource(mGreyDice[dieValue-1]);
+    public void setDieGrey(int dieIndex, int dieValue) {
+        mDiceImageViewList.get(dieIndex).setImageResource(mGreyDice[dieValue-1]);
     }
 
-    private void setDieRed(int dieIndex, int dieValue) {
-        mImageViewDice.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
+    public void setDieRed(int dieIndex, int dieValue) {
+        mDiceImageViewList.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
     }
 
     private void setImageViewListeners(View v) {
-        for (int i = 0; i < mImageViewDice.size(); i++) {
+        for (int i = 0; i < mDiceImageViewList.size(); i++) {
             final int index = i;
-            mImageViewDice.get(i).setOnClickListener(new View.OnClickListener() {
+            mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // hantera om man valt att låsa tärningens värde

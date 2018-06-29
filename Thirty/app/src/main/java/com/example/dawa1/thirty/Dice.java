@@ -7,7 +7,11 @@ public class Dice {
 
     private static Dice sDice;
     private List<Die> mDice;
-    private int maxDice = 6;
+    private int size = 6;
+
+    public int getSize() {
+        return size;
+    }
 
     public static Dice get() {
         if (sDice == null) {
@@ -19,7 +23,7 @@ public class Dice {
     private Dice() {
         mDice = new ArrayList<>();
 
-        for (int i = 0; i < maxDice; i++) {
+        for (int i = 0; i < size; i++) {
             mDice.add(new Die());
         }
     }
