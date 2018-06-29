@@ -1,7 +1,5 @@
 package com.example.dawa1.thirty;
 
-import android.widget.Toast;
-
 public class ThirtyGameLogic {
 
     private static Dice mDice = Dice.get(6);
@@ -19,6 +17,7 @@ public class ThirtyGameLogic {
                 }
             }
         }
+
         rollsLeft--;
     }
 

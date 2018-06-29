@@ -7,12 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
+
+
 
 
     private enum DIE_COLOR {WHITE, GRAY, RED};
@@ -28,7 +32,11 @@ public class GameFragment extends Fragment {
     private Button mRollButton;
     private Button mSkipButton;
 
+    private Spinner mSpinner;
+    private String[] mSpinnerContents;
+
     private ArrayList<ImageView> mDiceImageViewList;
+
     private Dice mDice;
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
@@ -61,6 +69,7 @@ public class GameFragment extends Fragment {
         setImageViews(v);
         setImageViewListeners(v);
         setButtons(v);
+        setSpinners(v);
 
         return v;
     }
@@ -93,6 +102,15 @@ public class GameFragment extends Fragment {
         mDiceImageViewList.add(5, mDieSix = (ImageView) v.findViewById(R.id.die_six));
 
         updateDice();
+    }
+
+    public void setSpinners(View v) {
+        mSpinner = (Spinner) v.findViewById(R.id.selectScore_spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.spinner_selections,
+                        R.layout.spinner_list_item);
+
+        mSpinner.setAdapter(adapter);
     }
 
     private void updateDice() {

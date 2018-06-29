@@ -4,4 +4,17 @@
     <string name="select_mode">Select Mode</string>
     <string name="skip_rolls">Skip Rolls!</string>
     <string name="todo">TODO</string>
+
+    <string-array name="spinner_selections">
+    <item>Low: Alla tärningar med värde 3 eller lägre ger poäng</item>
+    <item>4: Alla kombinationer av en eller flera tärningar som ger summan 4 ger poäng.</item>
+    <item>5: Alla kombinationer av en eller flera tärningar som ger summan 5 ger poäng.</item>
+    <item>6: Alla kombinationer av en eller flera tärningar som ger summan 6 ger poäng.</item>
+    <item>7: Alla kombinationer av en eller flera tärningar som ger summan 7 ger poäng.</item>
+    <item>8: Alla kombinationer av en eller flera tärningar som ger summan 8 ger poäng.</item>
+    <item>9: Alla kombinationer av en eller flera tärningar som ger summan 9 ger poäng.</item>
+    <item>10: Alla kombinationer av en eller flera tärningar som ger summan 10 ger poäng.</item>
+    <item>11: Alla kombinationer av en eller flera tärningar som ger summan 11 ger poäng.</item>
+    <item>12: Alla kominationer av en eller flera tärningar som ger summan 12 ger poäng.</item>
+    </string-array>
 </resources>
