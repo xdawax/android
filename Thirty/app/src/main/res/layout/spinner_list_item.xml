@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:text="@+id/TextView01"
     android:id="@+id/TextView01"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="17sp">
+    android:textSize="17sp"
+    tools:text="Taget från http://androidrocksonmobility.blogspot.com/2011/09/show-multiline-text-inside-spinner.html">
 </TextView>
+
