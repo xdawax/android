@@ -11,7 +11,7 @@ public class ThirtyGameLogic {
         int size = dice.getSize();
 
         for (int i = 0; i < size; i++) {
-            if (!sLockedDice[i]) {
+            if (isUnLocked(i)) {
                 dice.rollDie(i);
             }
         }
@@ -19,6 +19,10 @@ public class ThirtyGameLogic {
 
     public static void changeLock(int index) {
         sLockedDice[index] = !(sLockedDice[index]);
+    }
+
+    public static boolean isUnLocked(int index) {
+        return !(sLockedDice[index]);
     }
 
     public static void init(int diceAmount) {

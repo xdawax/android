@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
 
-    private final int mDiceAmount = 6;
+
+    private enum DIE_COLOR {WHITE, GRAY, RED};
+    private final int DICE_AMOUNT = 6;
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -53,7 +55,7 @@ public class GameFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
-        ThirtyGameLogic.init(mDiceAmount);
+        ThirtyGameLogic.init(DICE_AMOUNT);
 
         mDiceImageViewList = new ArrayList<ImageView>();
         mDice = Dice.get();
@@ -96,8 +98,13 @@ public class GameFragment extends Fragment {
     }
 
     private void updateDice() {
-        for (int i = 0; i < mDiceAmount; i++) {
-            setDieWhite(i, mDice.getDieValue(i));
+        for (int i = 0; i < DICE_AMOUNT; i++) {
+            if (ThirtyGameLogic.isUnLocked(i)) {
+                setDieWhite(i, mDice.getDieValue(i));
+            }
+            else {
+                setDieGrey(i, mDice.getDieValue(i));
+            }
         }
     }
 
@@ -120,6 +127,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     ThirtyGameLogic.changeLock(index);
+                    updateDice();
                     // hantera om man valt att låsa tärningens värde
                 }
             });
