@@ -21,7 +21,12 @@ public class ThirtyGameLogic {
         rollsLeft--;
     }
 
-    private void resetRolls() {
+    public void caluclateScore() {
+
+    }
+
+    // change to private after debug
+    public static void resetRolls() {
         rollsLeft = 3;
     }
 

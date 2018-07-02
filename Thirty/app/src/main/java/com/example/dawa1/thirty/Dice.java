@@ -21,6 +21,10 @@ public class Dice {
         return sDice;
     }
 
+    public void sortDice() {
+
+    }
+
     private Dice(int size) {
         this.size = size;
         mDice = new ArrayList<>();

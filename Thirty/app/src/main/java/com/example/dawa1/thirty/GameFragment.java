@@ -1,5 +1,6 @@
 package com.example.dawa1.thirty;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,17 +8,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
 
-
-
+    /* Debuggers */
+    private Button mDebuggResetRolls;
 
     private enum DIE_COLOR {WHITE, GRAY, RED};
     private final int DICE_AMOUNT = 6;
@@ -38,6 +42,8 @@ public class GameFragment extends Fragment {
     private ArrayList<ImageView> mDiceImageViewList;
 
     private Dice mDice;
+
+    private int mSpinnerIndex;
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
             R.drawable.white3, R.drawable.white4,
@@ -71,6 +77,13 @@ public class GameFragment extends Fragment {
         setButtons(v);
         setSpinners(v);
 
+        mDebuggResetRolls = (Button) v.findViewById(R.id.reset_rolls);
+        mDebuggResetRolls.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ThirtyGameLogic.resetRolls();
+            }
+        });
         return v;
     }
 
@@ -107,32 +120,56 @@ public class GameFragment extends Fragment {
     public void setSpinners(View v) {
         mSpinner = (Spinner) v.findViewById(R.id.selectScore_spinner);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.spinner_selections,
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.spinner_selections,
                         R.layout.spinner_list_item);
 
         mSpinner.setAdapter(adapter);
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSpinnerIndex = adapterView.getSelectedItemPosition();
+                Toast.makeText(getActivity(), "Selected index: " + mSpinnerIndex,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Nothing for now
+            }
+        });
     }
 
     private void updateDice() {
         for (int i = 0; i < DICE_AMOUNT; i++) {
             if (mDice.isUnLocked(i)) {
-                setDieWhite(i, mDice.getDieValue(i));
+                displayWhiteDie(i, mDice.getDieValue(i));
             }
             else {
-                setDieGrey(i, mDice.getDieValue(i));
+                displayGreyDie(i, mDice.getDieValue(i));
             }
         }
     }
 
-    public void setDieWhite(int dieIndex, int dieValue) {
+    public void displayLockedDie(int dieIndex) {
+        mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.BLACK);
+        mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
+    }
+
+    public void displayUnLockedDie(int dieIndex) {
+        mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.WHITE);
+        mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
+    }
+
+    public void displayWhiteDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mWhiteDice[dieValue-1]);
     }
 
-    public void setDieGrey(int dieIndex, int dieValue) {
+    public void displayGreyDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mGreyDice[dieValue-1]);
     }
 
-    public void setDieRed(int dieIndex, int dieValue) {
+    public void displayRedDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
     }
 
@@ -144,7 +181,6 @@ public class GameFragment extends Fragment {
                 public void onClick(View view) {
                     mDice.changeLock(index);
                     updateDice();
-                    // hantera om man valt att låsa tärningens värde
                 }
             });
         }
