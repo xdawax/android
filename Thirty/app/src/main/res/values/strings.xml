@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Thirty</string>
     <string name="roll_dice">Roll Dice!</string>
-    <string name="select_mode">Select Mode</string>
+    <string name="select_mode">Score Mode</string>
     <string name="skip_rolls">Skip Rolls!</string>
     <string name="todo">TODO</string>
+    <string name="confirm">Confirm</string>
+    <string name="calculate_score">Calculate Score!</string>
+    <string name="no_more_rolls">Out of rolls! Select score mode.</string>
 
     <string-array name="spinner_selections">
     <item>Low: Alla tärningar med värde 3 eller lägre ger poäng</item>

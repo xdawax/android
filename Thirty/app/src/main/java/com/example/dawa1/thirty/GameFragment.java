@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,8 +41,9 @@ public class GameFragment extends Fragment {
     private ArrayList<ImageView> mDiceImageViewList;
 
     private Dice mDice;
+    private int mTotalScore;
 
-    private int mSpinnerIndex;
+    private int mSpinnerIndex = 0;
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
             R.drawable.white3, R.drawable.white4,
@@ -92,8 +92,14 @@ public class GameFragment extends Fragment {
         mRollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    ThirtyGameLogic.rollDice();
-                    updateDice();
+                ThirtyGameLogic.rollDice();
+                updateDice();
+                if (!rollsLeft()) {
+                    Toast.makeText(getContext(), R.string.no_more_rolls, Toast.LENGTH_SHORT).show();
+                    mRollButton.setText(R.string.calculate_score);
+                    mSkipButton.setText(R.string.confirm);
+
+                }
             }
         });
 
@@ -101,10 +107,15 @@ public class GameFragment extends Fragment {
         mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 // Spelaren är nöjd och vill inte rulla mera
                 //Gör en knapp för att bekräfta
             }
         });
+    }
+
+    private boolean rollsLeft() {
+        return ThirtyGameLogic.getRollsLeft() > 0;
     }
     private void setImageViews(View v) {
         mDiceImageViewList.add(0, mDieOne = (ImageView) v.findViewById(R.id.die_one));
@@ -151,25 +162,27 @@ public class GameFragment extends Fragment {
         }
     }
 
-    public void displayLockedDie(int dieIndex) {
+
+
+    private void displayLockedDie(int dieIndex) {
         mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.BLACK);
         mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
     }
 
-    public void displayUnLockedDie(int dieIndex) {
+    private void displayUnLockedDie(int dieIndex) {
         mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.WHITE);
         mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
     }
 
-    public void displayWhiteDie(int dieIndex, int dieValue) {
+    private void displayWhiteDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mWhiteDice[dieValue-1]);
     }
 
-    public void displayGreyDie(int dieIndex, int dieValue) {
+    private void displayGreyDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mGreyDice[dieValue-1]);
     }
 
-    public void displayRedDie(int dieIndex, int dieValue) {
+    private void displayRedDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
     }
 

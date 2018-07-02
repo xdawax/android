@@ -1,6 +1,9 @@
 package com.example.dawa1.thirty;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Dice {
@@ -21,8 +24,22 @@ public class Dice {
         return sDice;
     }
 
-    public void sortDice() {
+    public void sortDiceDescending() {
+        Die nextDie;
+        Die currentDie;
+        boolean swapped = true;
 
+        while (swapped) {
+            swapped = false;
+            for (int i = 0; i < size - 1; i++) {
+                currentDie = mDice.get(i);
+                nextDie = mDice.get(i + 1);
+                if (currentDie.getValue() < nextDie.getValue()) {
+                    Collections.swap(mDice, i, i+1);
+                    swapped = true;
+                }
+            }
+        }
     }
 
     private Dice(int size) {
