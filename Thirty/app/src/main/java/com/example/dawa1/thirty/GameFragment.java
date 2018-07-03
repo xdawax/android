@@ -19,11 +19,12 @@ import java.util.ArrayList;
 
 public class GameFragment extends Fragment {
 
+    private final int DICE_AMOUNT = 6;
+    private final int MAX_ROLLS = 3;
+    private final int SPINNER_INDEX_OFFSET = 3;
     /* Debuggers */
     private Button mDebuggResetRolls;
-
-    private enum DIE_COLOR {WHITE, GRAY, RED};
-    private final int DICE_AMOUNT = 6;
+    private int mRollsLeft = MAX_ROLLS;
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -36,12 +37,10 @@ public class GameFragment extends Fragment {
     private Button mSkipButton;
 
     private Spinner mSpinner;
-    private String[] mSpinnerContents;
 
     private ArrayList<ImageView> mDiceImageViewList;
 
     private Dice mDice;
-    private int mTotalScore;
 
     private int mSpinnerIndex = 0;
 
@@ -70,7 +69,7 @@ public class GameFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
         mDiceImageViewList = new ArrayList<ImageView>();
-        mDice = Dice.get(DICE_AMOUNT);
+        mDice = Dice.get();
 
         setImageViews(v);
         setImageViewListeners(v);
@@ -81,7 +80,7 @@ public class GameFragment extends Fragment {
         mDebuggResetRolls.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ThirtyGameLogic.resetRolls();
+                resetRolls();
             }
         });
         return v;
@@ -92,14 +91,10 @@ public class GameFragment extends Fragment {
         mRollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ThirtyGameLogic.rollDice();
-                updateDice();
-                if (!rollsLeft()) {
-                    Toast.makeText(getContext(), R.string.no_more_rolls, Toast.LENGTH_SHORT).show();
-                    mRollButton.setText(R.string.calculate_score);
-                    mSkipButton.setText(R.string.confirm);
-
+                if (rollsLeft()) {
+                    mDice.rollDice();
                 }
+                updateBoard();
             }
         });
 
@@ -114,9 +109,76 @@ public class GameFragment extends Fragment {
         });
     }
 
-    private boolean rollsLeft() {
-        return ThirtyGameLogic.getRollsLeft() > 0;
+    private void updateBoard() {
+        updateDice();
+        updateButtonText();
     }
+
+    private void updateButtonText() {
+        if (rollsLeft()) {
+            mRollsLeft--;
+            Toast.makeText(getContext(), mRollsLeft + " rolls left!", Toast.LENGTH_SHORT).show();
+            mRollButton.setText(R.string.roll_dice);
+            mSkipButton.setText(R.string.skip_rolls);
+        }
+        if (!rollsLeft()){
+            Toast.makeText(getContext(), R.string.no_more_rolls, Toast.LENGTH_SHORT).show();
+            mRollButton.setText(R.string.calculate_score);
+            mRollButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getBestScore();
+                }
+            });
+            mSkipButton.setText(R.string.confirm);
+        }
+    }
+
+    public int getBestScore() {
+
+        mDice.sortDiceDescending();
+        int currentValue = 0; // håller värdet på de tärningar som för tillfället adderas
+        int countValue = mSpinnerIndex + SPINNER_INDEX_OFFSET;  // Sätter t.ex index 9 -> 12 som motsvarar vad tärningarnas värde ska ha
+        int totalValue = 0;
+        int loopOffset = 1;
+        boolean usedDice[] = new boolean[] {false, false, false, false, false, false};
+
+
+        for (int i = 0; i < DICE_AMOUNT; i++) {
+            currentValue = mDice.getDieValue(i);
+            if (currentValue == countValue) {
+                totalValue += countValue;
+                continue;
+            }
+            for (int j = i + loopOffset; j < DICE_AMOUNT; j++) {
+                if (currentValue + mDice.getDieValue(j) < countValue) {
+                    currentValue += mDice.getDieValue(j);
+                } else if (currentValue + mDice.getDieValue(j) > countValue) {
+                    i--;
+                    loopOffset++;
+                    break;
+                } else if (currentValue + mDice.getDieValue(j) == countValue) {
+                    totalValue += currentValue + mDice.getDieValue(j);
+                    loopOffset = i + 2;
+                    break;
+                }
+            }
+        }
+
+
+        Toast.makeText(getActivity(), "" + totalValue, Toast.LENGTH_SHORT).show();
+
+        return totalValue;
+    }
+
+    private boolean rollsLeft() {
+        return mRollsLeft > 0;
+    }
+
+    private void resetRolls() {
+        mRollsLeft = MAX_ROLLS;
+    }
+
     private void setImageViews(View v) {
         mDiceImageViewList.add(0, mDieOne = (ImageView) v.findViewById(R.id.die_one));
         mDiceImageViewList.add(1, mDieTwo = (ImageView) v.findViewById(R.id.die_two));

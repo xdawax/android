@@ -1,7 +1,5 @@
 package com.example.dawa1.thirty;
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,9 +15,17 @@ public class Dice {
         return size;
     }
 
-    public static Dice get(int size) {
+    public void rollDice() {
+        for (int i = 0; i < size; i++) {
+            if (isUnLocked(i)) {
+                rollDie(i);
+            }
+        }
+    }
+
+    public static Dice get() {
         if (sDice == null) {
-            sDice = new Dice(size);
+            sDice = new Dice();
         }
         return sDice;
     }
@@ -42,8 +48,10 @@ public class Dice {
         }
     }
 
-    private Dice(int size) {
-        this.size = size;
+
+
+    private Dice() {
+        size = 6;
         mDice = new ArrayList<>();
         sLockedDice = new boolean[size];
 

@@ -7,6 +7,7 @@
     <string name="confirm">Confirm</string>
     <string name="calculate_score">Calculate Score!</string>
     <string name="no_more_rolls">Out of rolls! Select score mode.</string>
+    <string name="rolls_left">Rolls left:</string>
 
     <string-array name="spinner_selections">
     <item>Low: Alla tärningar med värde 3 eller lägre ger poäng</item>
