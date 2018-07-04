@@ -16,12 +16,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameFragment extends Fragment {
 
     private final int DICE_AMOUNT = 6;
     private final int MAX_ROLLS = 3;
     private final int SPINNER_INDEX_OFFSET = 3;
+    private final boolean DEBUG_MODE = true;
     /* Debuggers */
     private Button mDebuggResetRolls;
     private int mRollsLeft = MAX_ROLLS;
@@ -76,13 +78,15 @@ public class GameFragment extends Fragment {
         setButtons(v);
         setSpinners(v);
 
-        mDebuggResetRolls = (Button) v.findViewById(R.id.reset_rolls);
-        mDebuggResetRolls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetRolls();
-            }
-        });
+        if (DEBUG_MODE) {
+            mDebuggResetRolls = (Button) v.findViewById(R.id.reset_rolls);
+            mDebuggResetRolls.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    resetRolls();
+                }
+            });
+        }
         return v;
     }
 
@@ -135,41 +139,117 @@ public class GameFragment extends Fragment {
     }
 
     public int getBestScore() {
-
         mDice.sortDiceDescending();
+        int[] dieValues = mDice.getValueArray(DICE_AMOUNT);
+        int countedThisRound[] = new int[] {0,0,0,0,0,0};
+
         int currentValue = 0; // håller värdet på de tärningar som för tillfället adderas
         int countValue = mSpinnerIndex + SPINNER_INDEX_OFFSET;  // Sätter t.ex index 9 -> 12 som motsvarar vad tärningarnas värde ska ha
         int totalValue = 0;
         int loopOffset = 1;
+
+        for (int i = 0; i < DICE_AMOUNT; i++) {
+            currentValue = dieValues[i];
+
+            if (currentValue == countValue) {
+                totalValue += dieValues[i];
+                dieValues[i] = 0;
+            } else if (currentValue == 0) {
+                continue;
+            }
+            for (int j = i + loopOffset; j < DICE_AMOUNT; j++) {
+                if (dieValues[j] == 0) {
+                    if (j == 5) {
+                        loopOffset = 1;
+                    }
+                    continue;
+                } else if (dieValues[j] + currentValue < countValue) {
+                    currentValue += dieValues[j];
+                    countedThisRound[j] = dieValues[j];
+                    dieValues[j] = 0;
+                    continue;
+                } else if (dieValues[j] + currentValue > countValue) {
+                    // restores the removed values of the outerloops iteration
+                    for (int l = 0; l < DICE_AMOUNT; l++) {
+                        if (countedThisRound[l] != 0) {
+                            dieValues[l] = countedThisRound[l];
+                        }
+                    }
+                    i--;
+                    loopOffset++;
+                    break;
+                } else if (dieValues[j] + currentValue == countValue) {
+                    totalValue += dieValues[j] + currentValue;
+                    dieValues[i] = 0;
+                    dieValues[j] = 0;
+                    loopOffset = 1;
+                    for (int k = 0; k < DICE_AMOUNT; k++) {
+                        countedThisRound[k] = 0;
+                    }
+                    break;
+                }
+            }
+        }
+        Toast.makeText(getActivity(), "" + totalValue, Toast.LENGTH_SHORT).show();
+        return totalValue;
+    }
+
+    /* public int getBestScore() {
+
+        mDice.sortDiceDescending();
+
         boolean usedDice[] = new boolean[] {false, false, false, false, false, false};
+
 
 
         for (int i = 0; i < DICE_AMOUNT; i++) {
             currentValue = mDice.getDieValue(i);
+
             if (currentValue == countValue) {
                 totalValue += countValue;
+                usedDice[i] = true;
                 continue;
             }
+
             for (int j = i + loopOffset; j < DICE_AMOUNT; j++) {
-                if (currentValue + mDice.getDieValue(j) < countValue) {
+                if (currentValue + mDice.getDieValue(j) < countValue && !usedDice[j] && !usedDice[i]) {
                     currentValue += mDice.getDieValue(j);
-                } else if (currentValue + mDice.getDieValue(j) > countValue) {
+                    usedDice[j] = true;
+                    countedThisRound[j] = true;
+                    continue;
+                } else if (currentValue + mDice.getDieValue(j) > countValue && !usedDice[j] && !usedDice[i]) {
+                    for (int k = 0; k < DICE_AMOUNT; k++) {
+                        if (countedThisRound[k]) {
+                            usedDice[k] = false;
+                            countedThisRound[k] = false;
+                        }
+                    }
                     i--;
                     loopOffset++;
+
                     break;
-                } else if (currentValue + mDice.getDieValue(j) == countValue) {
+                } else if (currentValue + mDice.getDieValue(j) == countValue && !usedDice[j] && !usedDice[i]) {
+                    usedDice[i] = true;
+                    usedDice[j] = true;
                     totalValue += currentValue + mDice.getDieValue(j);
-                    loopOffset = i + 2;
+                    loopOffset = 1;
+
+
+
                     break;
                 }
             }
         }
 
 
-        Toast.makeText(getActivity(), "" + totalValue, Toast.LENGTH_SHORT).show();
+
 
         return totalValue;
     }
+
+*/
+
+
 
     private boolean rollsLeft() {
         return mRollsLeft > 0;
@@ -177,6 +257,7 @@ public class GameFragment extends Fragment {
 
     private void resetRolls() {
         mRollsLeft = MAX_ROLLS;
+        updateButtonText();
     }
 
     private void setImageViews(View v) {

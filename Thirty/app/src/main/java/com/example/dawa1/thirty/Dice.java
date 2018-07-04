@@ -91,4 +91,14 @@ public class Dice {
             mDice.get(index).roll();
         }
     }
+
+    public int[] getValueArray(int elements) {
+        int valueArray[] = new int[elements];
+
+        for (int i = 0; i < elements; i++) {
+            valueArray[i] = getDieValue(i);
+        }
+
+        return valueArray;
+    }
 }
