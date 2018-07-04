@@ -146,7 +146,6 @@ public class GameFragment extends Fragment {
         int currentValue = 0; // håller värdet på de tärningar som för tillfället adderas
         int countValue = mSpinnerIndex + SPINNER_INDEX_OFFSET;  // Sätter t.ex index 9 -> 12 som motsvarar vad tärningarnas värde ska ha
         int totalValue = 0;
-        int loopOffset = 1;
 
         for (int i = 0; i < DICE_AMOUNT; i++) {
             currentValue = dieValues[i];
@@ -157,38 +156,29 @@ public class GameFragment extends Fragment {
             } else if (currentValue == 0) {
                 continue;
             }
-            for (int j = i + loopOffset; j < DICE_AMOUNT; j++) {
+            for (int j = i + 1; j < DICE_AMOUNT; j++) {
                 if (dieValues[j] == 0) {
-                    if (j == 5) {
-                        loopOffset = 1;
-                    }
                     continue;
                 } else if (dieValues[j] + currentValue < countValue) {
                     currentValue += dieValues[j];
                     countedThisRound[j] = dieValues[j];
                     dieValues[j] = 0;
                     continue;
-                } else if (dieValues[j] + currentValue > countValue) {
-                    // restores the removed values of the outerloops iteration
-                    for (int l = 0; l < DICE_AMOUNT; l++) {
-                        if (countedThisRound[l] != 0) {
-                            dieValues[l] = countedThisRound[l];
-                        }
-                    }
-                    i--;
-                    loopOffset++;
-                    break;
                 } else if (dieValues[j] + currentValue == countValue) {
                     totalValue += dieValues[j] + currentValue;
                     dieValues[i] = 0;
                     dieValues[j] = 0;
-                    loopOffset = 1;
-                    for (int k = 0; k < DICE_AMOUNT; k++) {
-                        countedThisRound[k] = 0;
-                    }
+
                     break;
                 }
             }
+            for (int l = 0; l < DICE_AMOUNT; l++) {
+                if (countedThisRound[l] != 0) {
+                    dieValues[l] = countedThisRound[l];
+                    countedThisRound[l] = 0;
+                }
+            }
+
         }
         Toast.makeText(getActivity(), "" + totalValue, Toast.LENGTH_SHORT).show();
         return totalValue;
