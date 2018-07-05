@@ -1,5 +1,7 @@
 package com.example.dawa1.thirty;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,6 +66,12 @@ public class Dice {
         }
     }
 
+    public void unlockAllDice() {
+        for (int i = 0; i < 6; i++) {
+            sLockedDice[i] = false;
+        }
+    }
+
     public void changeLock(int index) {
         if (index >= size) {
             return;
@@ -100,5 +108,50 @@ public class Dice {
         }
 
         return valueArray;
+    }
+
+    public int getBestScore(int mSpinnerIndex, int offset) {
+        sortDiceDescending();
+        int[] dieValues = getValueArray(size);
+        int countedThisRound[] = new int[] {0,0,0,0,0,0};
+
+        int currentValue = 0; // håller värdet på de tärningar som för tillfället adderas
+        int countValue = mSpinnerIndex + offset;  // Sätter t.ex index 9 -> 12 som motsvarar vad tärningarnas värde ska ha
+        int totalValue = 0;
+
+        for (int i = 0; i < size; i++) {
+            currentValue = dieValues[i];
+
+            if (currentValue == countValue) {
+                totalValue += dieValues[i];
+                dieValues[i] = 0;
+            } else if (currentValue == 0) {
+                continue;
+            }
+            for (int j = i + 1; j < size; j++) {
+                if (dieValues[j] == 0) {
+                    continue;
+                } else if (dieValues[j] + currentValue < countValue) {
+                    currentValue += dieValues[j];
+                    countedThisRound[j] = dieValues[j];
+                    dieValues[j] = 0;
+                    continue;
+                } else if (dieValues[j] + currentValue == countValue) {
+                    totalValue += dieValues[j] + currentValue;
+                    dieValues[i] = 0;
+                    dieValues[j] = 0;
+
+                    break;
+                }
+            }
+            for (int l = 0; l < size; l++) {
+                if (countedThisRound[l] != 0) {
+                    dieValues[l] = countedThisRound[l];
+                    countedThisRound[l] = 0;
+                }
+            }
+
+        }
+        return totalValue;
     }
 }

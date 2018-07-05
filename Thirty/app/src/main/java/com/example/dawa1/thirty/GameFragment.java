@@ -13,9 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GameFragment extends Fragment {
@@ -23,10 +25,14 @@ public class GameFragment extends Fragment {
     private final int DICE_AMOUNT = 6;
     private final int MAX_ROLLS = 3;
     private final int SPINNER_INDEX_OFFSET = 3;
-    private final boolean DEBUG_MODE = true;
-    /* Debuggers */
-    private Button mDebuggResetRolls;
-    private int mRollsLeft = MAX_ROLLS;
+    private final int SPINNER_SIZE = 9;
+    private final boolean DEBUG_MODE = false;
+
+    private final String SPINNER_INDEX = "mSpinnerIndex";
+    private final String ROLLS_LEFT = "mRollsLeft";
+    private final String SCORE_BOARD = "mScoreList";
+
+    private int mRollsLeft = MAX_ROLLS;  // saved
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -37,14 +43,15 @@ public class GameFragment extends Fragment {
 
     private Button mRollButton;
     private Button mSkipButton;
+    private Button mCalculateScoreButton;
 
-    private Spinner mSpinner;
+    private Spinner mSpinner;  // does not need saving
 
-    private ArrayList<ImageView> mDiceImageViewList;
+    private ArrayList<ImageView> mDiceImageViewList;  // does not need saving
+    private ArrayList<Integer> mScoreList;  // saved
+    private Dice mDice; // does not need saving
 
-    private Dice mDice;
-
-    private int mSpinnerIndex = 0;
+    private int mSpinnerIndex = 0; // saved
 
     private int[] mWhiteDice = new int[]{R.drawable.white1, R.drawable.white2,
             R.drawable.white3, R.drawable.white4,
@@ -65,28 +72,40 @@ public class GameFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt(ROLLS_LEFT, mRollsLeft);
+        outState.putInt(SPINNER_INDEX, mSpinnerIndex);
+        outState.putIntegerArrayList(SCORE_BOARD, mScoreList);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, container, false);
 
+        if (savedInstanceState != null) {
+            mRollsLeft = savedInstanceState.getInt(ROLLS_LEFT, 0);
+            mSpinnerIndex = savedInstanceState.getInt(SPINNER_INDEX, 0);
+            mScoreList = savedInstanceState.getIntegerArrayList(SCORE_BOARD);
+        }
+
         mDiceImageViewList = new ArrayList<ImageView>();
         mDice = Dice.get();
+
+        if (mScoreList == null) {
+            Toast.makeText(getActivity(), "BLUBBA", Toast.LENGTH_LONG).show();
+            mScoreList = new ArrayList<>(Collections.nCopies(SPINNER_SIZE + 1, 0));
+        }
 
         setImageViews(v);
         setImageViewListeners(v);
         setButtons(v);
+        updateButtons();
         setSpinners(v);
 
-        if (DEBUG_MODE) {
-            mDebuggResetRolls = (Button) v.findViewById(R.id.reset_rolls);
-            mDebuggResetRolls.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    resetRolls();
-                }
-            });
-        }
         return v;
     }
 
@@ -97,6 +116,7 @@ public class GameFragment extends Fragment {
             public void onClick(View view) {
                 if (rollsLeft()) {
                     mDice.rollDice();
+                    mRollsLeft--;
                 }
                 updateBoard();
             }
@@ -106,148 +126,69 @@ public class GameFragment extends Fragment {
         mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 // Spelaren är nöjd och vill inte rulla mera
                 //Gör en knapp för att bekräfta
+                // Ej implementerat
+            }
+        });
+
+        mCalculateScoreButton = (Button) v.findViewById(R.id.calculate_score);
+        mCalculateScoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calculateScore();
+                nextRound();
             }
         });
     }
 
-    private void updateBoard() {
-        updateDice();
-        updateButtonText();
-    }
 
-    private void updateButtonText() {
+
+
+
+    private void updateButtons() {
         if (rollsLeft()) {
-            mRollsLeft--;
-            Toast.makeText(getContext(), mRollsLeft + " rolls left!", Toast.LENGTH_SHORT).show();
-            mRollButton.setText(R.string.roll_dice);
-            mSkipButton.setText(R.string.skip_rolls);
+            if (mRollsLeft > 2) {
+                Toast.makeText(getContext(), mRollsLeft + ((mRollsLeft > 1) ? " rolls left!" : " roll left!"), Toast.LENGTH_SHORT).show();
+            }
+            mRollButton.setEnabled(true);
+            mSkipButton.setEnabled(true);
+            mCalculateScoreButton.setEnabled(false);
         }
         if (!rollsLeft()){
             Toast.makeText(getContext(), R.string.no_more_rolls, Toast.LENGTH_SHORT).show();
-            mRollButton.setText(R.string.calculate_score);
-            mRollButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getBestScore();
-                }
-            });
-            mSkipButton.setText(R.string.confirm);
+            mRollButton.setEnabled(false);
+            mSkipButton.setEnabled(false);
+            mCalculateScoreButton.setEnabled(true);
         }
     }
 
-    public int getBestScore() {
-        mDice.sortDiceDescending();
-        int[] dieValues = mDice.getValueArray(DICE_AMOUNT);
-        int countedThisRound[] = new int[] {0,0,0,0,0,0};
-
-        int currentValue = 0; // håller värdet på de tärningar som för tillfället adderas
-        int countValue = mSpinnerIndex + SPINNER_INDEX_OFFSET;  // Sätter t.ex index 9 -> 12 som motsvarar vad tärningarnas värde ska ha
-        int totalValue = 0;
-
-        for (int i = 0; i < DICE_AMOUNT; i++) {
-            currentValue = dieValues[i];
-
-            if (currentValue == countValue) {
-                totalValue += dieValues[i];
-                dieValues[i] = 0;
-            } else if (currentValue == 0) {
-                continue;
-            }
-            for (int j = i + 1; j < DICE_AMOUNT; j++) {
-                if (dieValues[j] == 0) {
-                    continue;
-                } else if (dieValues[j] + currentValue < countValue) {
-                    currentValue += dieValues[j];
-                    countedThisRound[j] = dieValues[j];
-                    dieValues[j] = 0;
-                    continue;
-                } else if (dieValues[j] + currentValue == countValue) {
-                    totalValue += dieValues[j] + currentValue;
-                    dieValues[i] = 0;
-                    dieValues[j] = 0;
-
-                    break;
-                }
-            }
-            for (int l = 0; l < DICE_AMOUNT; l++) {
-                if (countedThisRound[l] != 0) {
-                    dieValues[l] = countedThisRound[l];
-                    countedThisRound[l] = 0;
-                }
-            }
-
-        }
-        Toast.makeText(getActivity(), "" + totalValue, Toast.LENGTH_SHORT).show();
-        return totalValue;
+    private void calculateScore() {
+        int calculatedScore = mDice.getBestScore(mSpinnerIndex, SPINNER_INDEX_OFFSET);
+        mScoreList.set(mSpinnerIndex, calculatedScore);
+        Toast.makeText(getActivity(),
+                "Adding " + calculatedScore + " to index: " + mSpinnerIndex,
+                Toast.LENGTH_SHORT).show();
     }
-
-    /* public int getBestScore() {
-
-        mDice.sortDiceDescending();
-
-        boolean usedDice[] = new boolean[] {false, false, false, false, false, false};
-
-
-
-        for (int i = 0; i < DICE_AMOUNT; i++) {
-            currentValue = mDice.getDieValue(i);
-
-            if (currentValue == countValue) {
-                totalValue += countValue;
-                usedDice[i] = true;
-                continue;
-            }
-
-            for (int j = i + loopOffset; j < DICE_AMOUNT; j++) {
-                if (currentValue + mDice.getDieValue(j) < countValue && !usedDice[j] && !usedDice[i]) {
-                    currentValue += mDice.getDieValue(j);
-                    usedDice[j] = true;
-                    countedThisRound[j] = true;
-                    continue;
-                } else if (currentValue + mDice.getDieValue(j) > countValue && !usedDice[j] && !usedDice[i]) {
-                    for (int k = 0; k < DICE_AMOUNT; k++) {
-                        if (countedThisRound[k]) {
-                            usedDice[k] = false;
-                            countedThisRound[k] = false;
-                        }
-                    }
-                    i--;
-                    loopOffset++;
-
-                    break;
-                } else if (currentValue + mDice.getDieValue(j) == countValue && !usedDice[j] && !usedDice[i]) {
-                    usedDice[i] = true;
-                    usedDice[j] = true;
-                    totalValue += currentValue + mDice.getDieValue(j);
-                    loopOffset = 1;
-
-
-
-                    break;
-                }
-            }
-        }
-
-
-
-
-        return totalValue;
-    }
-
-*/
-
-
 
     private boolean rollsLeft() {
         return mRollsLeft > 0;
     }
 
+    private void nextRound() {
+        resetRolls();
+        updateBoard();
+    }
+
     private void resetRolls() {
+        mDice.unlockAllDice();
         mRollsLeft = MAX_ROLLS;
-        updateButtonText();
+        updateBoard();
+    }
+
+    private void updateBoard() {
+        updateDice();
+        updateButtons();
     }
 
     private void setImageViews(View v) {
@@ -261,29 +202,6 @@ public class GameFragment extends Fragment {
         updateDice();
     }
 
-    public void setSpinners(View v) {
-        mSpinner = (Spinner) v.findViewById(R.id.selectScore_spinner);
-
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.spinner_selections,
-                        R.layout.spinner_list_item);
-
-        mSpinner.setAdapter(adapter);
-
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mSpinnerIndex = adapterView.getSelectedItemPosition();
-                Toast.makeText(getActivity(), "Selected index: " + mSpinnerIndex,
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // Nothing for now
-            }
-        });
-    }
-
     private void updateDice() {
         for (int i = 0; i < DICE_AMOUNT; i++) {
             if (mDice.isUnLocked(i)) {
@@ -295,7 +213,18 @@ public class GameFragment extends Fragment {
         }
     }
 
-
+    private void setImageViewListeners(View v) {
+        for (int i = 0; i < mDiceImageViewList.size(); i++) {
+            final int index = i;
+            mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDice.changeLock(index);
+                    updateDice();
+                }
+            });
+        }
+    }
 
     private void displayLockedDie(int dieIndex) {
         mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.BLACK);
@@ -319,16 +248,60 @@ public class GameFragment extends Fragment {
         mDiceImageViewList.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
     }
 
-    private void setImageViewListeners(View v) {
-        for (int i = 0; i < mDiceImageViewList.size(); i++) {
-            final int index = i;
-            mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mDice.changeLock(index);
-                    updateDice();
+    // gör egen klass!
+    public void setSpinners(View v) {
+        mSpinner = (Spinner) v.findViewById(R.id.selectScore_spinner);
+        String[] spinnerSelections = getResources().getStringArray(R.array.spinner_selections);;
+
+        List<String> spinnerList = new ArrayList<String>(Arrays.asList(spinnerSelections));
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), R.layout.spinner_list_item, spinnerList) {
+
+            @Override
+            public boolean isEnabled(int position) {
+                if (mScoreList.get(position) == 0) {
+                    return true;
+                } else {
+                    return false;
                 }
-            });
-        }
+            }
+
+            // Inspiration från https://android--examples.blogspot.com/2016/10/android-change-spinner-selected-item.html
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent){
+                TextView currentView = (TextView) super.getDropDownView(position, convertView, parent);
+                if (!isEnabled(position)) {
+                    currentView.setTextColor(Color.RED);
+                } else {
+                    currentView.setTextColor(Color.GREEN);
+                }
+                return currentView;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView currentView = (TextView) super.getView(position, convertView, parent);
+                currentView.setTextColor(Color.GREEN);
+                return currentView;
+            }
+        };
+
+        mSpinner.setAdapter(adapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSpinnerIndex = adapterView.getSelectedItemPosition();
+                if (DEBUG_MODE) {
+                    Toast.makeText(getActivity(), "Selected index: " + mSpinnerIndex,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Nothing for now
+            }
+        });
     }
+
 }

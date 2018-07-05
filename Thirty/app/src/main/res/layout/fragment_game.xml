@@ -126,13 +126,13 @@
         tools:layout_editor_absoluteX="8dp" />
 
     <Button
-        android:id="@+id/reset_rolls"
+        android:id="@+id/calculate_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Reset Button Debug"
+        android:text="Calculate Score"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/skip_roll_button" />
