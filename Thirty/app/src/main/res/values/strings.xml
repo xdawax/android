@@ -8,17 +8,18 @@
     <string name="calculate_score">Calculate Score!</string>
     <string name="no_more_rolls">Out of rolls! Select score mode.</string>
     <string name="rolls_left">Rolls left:</string>
+    <string name="total_score">Total Score:</string>
 
     <string-array name="spinner_selections">
-    <item>Low: Alla tärningar med värde 3 eller lägre ger poäng</item>
-    <item>4: Alla kombinationer av en eller flera tärningar som ger summan 4 ger poäng.</item>
-    <item>5: Alla kombinationer av en eller flera tärningar som ger summan 5 ger poäng.</item>
-    <item>6: Alla kombinationer av en eller flera tärningar som ger summan 6 ger poäng.</item>
-    <item>7: Alla kombinationer av en eller flera tärningar som ger summan 7 ger poäng.</item>
-    <item>8: Alla kombinationer av en eller flera tärningar som ger summan 8 ger poäng.</item>
-    <item>9: Alla kombinationer av en eller flera tärningar som ger summan 9 ger poäng.</item>
-    <item>10: Alla kombinationer av en eller flera tärningar som ger summan 10 ger poäng.</item>
-    <item>11: Alla kombinationer av en eller flera tärningar som ger summan 11 ger poäng.</item>
-    <item>12: Alla kominationer av en eller flera tärningar som ger summan 12 ger poäng.</item>
+        <item>Low: Count all dice 3 and less: </item>
+        <item>4: Count sums of four: </item>
+        <item>5: Count sums of five: </item>
+        <item>6: Count sums of six: </item>
+        <item>7: Count sums of seven: </item>
+        <item>8: Count sums of eight: </item>
+        <item>9: Count sums of nine: </item>
+        <item>10: Count sums of ten: </item>
+        <item>11: Count sums of eleven: </item>
+        <item>12: Count sums of twelve: </item>
     </string-array>
 </resources>

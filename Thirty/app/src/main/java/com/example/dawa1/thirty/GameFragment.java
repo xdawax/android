@@ -1,5 +1,6 @@
 package com.example.dawa1.thirty;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class GameFragment extends Fragment {
 
@@ -32,7 +31,7 @@ public class GameFragment extends Fragment {
     private final String ROLLS_LEFT = "mRollsLeft";
     private final String SCORE_BOARD = "mScoreList";
 
-    private int mRollsLeft = MAX_ROLLS;  // saved
+    private int mRollsLeft;  // saved
 
     private ImageView mDieOne;
     private ImageView mDieTwo;
@@ -61,11 +60,6 @@ public class GameFragment extends Fragment {
             R.drawable.grey3, R.drawable.grey4,
             R.drawable.grey5, R.drawable.grey6};
 
-    private int[] mRedDice = new int[]{R.drawable.red1, R.drawable.red2,
-            R.drawable.red3, R.drawable.red4,
-            R.drawable.red5, R.drawable.red6};
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,20 +84,18 @@ public class GameFragment extends Fragment {
             mRollsLeft = savedInstanceState.getInt(ROLLS_LEFT, 0);
             mSpinnerIndex = savedInstanceState.getInt(SPINNER_INDEX, 0);
             mScoreList = savedInstanceState.getIntegerArrayList(SCORE_BOARD);
+        } else {
+            mRollsLeft = MAX_ROLLS;
+            mScoreList = new ArrayList<>(Collections.nCopies(SPINNER_SIZE + 1, -1));
         }
 
         mDiceImageViewList = new ArrayList<ImageView>();
         mDice = Dice.get();
 
-        if (mScoreList == null) {
-            Toast.makeText(getActivity(), "BLUBBA", Toast.LENGTH_LONG).show();
-            mScoreList = new ArrayList<>(Collections.nCopies(SPINNER_SIZE + 1, 0));
-        }
-
         setImageViews(v);
         setImageViewListeners(v);
         setButtons(v);
-        updateButtons();
+      //  updateButtons();
         setSpinners(v);
 
         return v;
@@ -117,6 +109,7 @@ public class GameFragment extends Fragment {
                 if (rollsLeft()) {
                     mDice.rollDice();
                     mRollsLeft--;
+                    Toast.makeText(getContext(), mRollsLeft + ((mRollsLeft == 1) ? " roll left!" : " rolls left!"), Toast.LENGTH_SHORT).show();
                 }
                 updateBoard();
             }
@@ -142,21 +135,13 @@ public class GameFragment extends Fragment {
         });
     }
 
-
-
-
-
     private void updateButtons() {
         if (rollsLeft()) {
-            if (mRollsLeft > 2) {
-                Toast.makeText(getContext(), mRollsLeft + ((mRollsLeft > 1) ? " rolls left!" : " roll left!"), Toast.LENGTH_SHORT).show();
-            }
             mRollButton.setEnabled(true);
             mSkipButton.setEnabled(true);
             mCalculateScoreButton.setEnabled(false);
         }
         if (!rollsLeft()){
-            Toast.makeText(getContext(), R.string.no_more_rolls, Toast.LENGTH_SHORT).show();
             mRollButton.setEnabled(false);
             mSkipButton.setEnabled(false);
             mCalculateScoreButton.setEnabled(true);
@@ -166,9 +151,11 @@ public class GameFragment extends Fragment {
     private void calculateScore() {
         int calculatedScore = mDice.getBestScore(mSpinnerIndex, SPINNER_INDEX_OFFSET);
         mScoreList.set(mSpinnerIndex, calculatedScore);
-        Toast.makeText(getActivity(),
-                "Adding " + calculatedScore + " to index: " + mSpinnerIndex,
-                Toast.LENGTH_SHORT).show();
+        if (DEBUG_MODE) {
+            Toast.makeText(getActivity(),
+                    "Adding " + calculatedScore + " to index: " + mSpinnerIndex,
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean rollsLeft() {
@@ -176,9 +163,31 @@ public class GameFragment extends Fragment {
     }
 
     private void nextRound() {
-        resetRolls();
-        updateBoard();
+        if (countedAll()) {
+            updateSpinner();
+            showScoreBoard();
+        } else {
+            resetRolls();
+            updateBoard();
+
+        }
     }
+
+    void showScoreBoard() {
+        Intent intent = new Intent(getActivity(), ScoreActivity.class);
+        intent.putExtra(SCORE_BOARD, mScoreList);
+        startActivity(intent);
+    }
+
+    private boolean countedAll() {
+        for (int i = 0; i < mScoreList.size(); i++) {
+            if (mScoreList.get(i) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private void resetRolls() {
         mDice.unlockAllDice();
@@ -189,6 +198,17 @@ public class GameFragment extends Fragment {
     private void updateBoard() {
         updateDice();
         updateButtons();
+        updateSpinner();
+    }
+
+    private void updateSpinner() {
+        for (int i = 0; i < mScoreList.size(); i++) {
+            if (mScoreList.get(i) < 0) {
+                mSpinner.setSelection(i);
+                return;
+            }
+        }
+        mSpinner.setEnabled(false);
     }
 
     private void setImageViews(View v) {
@@ -202,6 +222,7 @@ public class GameFragment extends Fragment {
         updateDice();
     }
 
+    // kontrollerar om tärningen är låst och uppdaterar den i aktiviteten
     private void updateDice() {
         for (int i = 0; i < DICE_AMOUNT; i++) {
             if (mDice.isUnLocked(i)) {
@@ -226,40 +247,26 @@ public class GameFragment extends Fragment {
         }
     }
 
-    private void displayLockedDie(int dieIndex) {
-        mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.BLACK);
-        mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
-    }
-
-    private void displayUnLockedDie(int dieIndex) {
-        mDiceImageViewList.get(dieIndex).setBackgroundColor(Color.WHITE);
-        mDiceImageViewList.get(dieIndex).setPadding(2,2,2,2);
-    }
-
+    // sätter tärningen till vit
     private void displayWhiteDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mWhiteDice[dieValue-1]);
     }
 
+    // sätter tärningen till grå
     private void displayGreyDie(int dieIndex, int dieValue) {
         mDiceImageViewList.get(dieIndex).setImageResource(mGreyDice[dieValue-1]);
     }
 
-    private void displayRedDie(int dieIndex, int dieValue) {
-        mDiceImageViewList.get(dieIndex).setImageResource(mRedDice[dieValue-1]);
-    }
-
-    // gör egen klass!
     public void setSpinners(View v) {
         mSpinner = (Spinner) v.findViewById(R.id.selectScore_spinner);
-        String[] spinnerSelections = getResources().getStringArray(R.array.spinner_selections);;
+        String[] spinnerSelections = getResources().getStringArray(R.array.spinner_selections);
 
-        List<String> spinnerList = new ArrayList<String>(Arrays.asList(spinnerSelections));
-
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), R.layout.spinner_list_item, spinnerList) {
+        // gör egen klass!
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), R.layout.spinner_list_item, spinnerSelections) {
 
             @Override
             public boolean isEnabled(int position) {
-                if (mScoreList.get(position) == 0) {
+                if (mScoreList.get(position) < 0) {
                     return true;
                 } else {
                     return false;
@@ -272,6 +279,7 @@ public class GameFragment extends Fragment {
                 TextView currentView = (TextView) super.getDropDownView(position, convertView, parent);
                 if (!isEnabled(position)) {
                     currentView.setTextColor(Color.RED);
+                    currentView.setTextIsSelectable(false);
                 } else {
                     currentView.setTextColor(Color.GREEN);
                 }
