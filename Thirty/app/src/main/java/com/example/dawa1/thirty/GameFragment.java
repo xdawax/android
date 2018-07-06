@@ -95,7 +95,7 @@ public class GameFragment extends Fragment {
         setImageViews(v);
         setImageViewListeners(v);
         setButtons(v);
-      //  updateButtons();
+        updateButtons();
         setSpinners(v);
 
         return v;
