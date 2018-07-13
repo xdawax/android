@@ -9,6 +9,8 @@
     <string name="no_more_rolls">Out of rolls! Select score mode.</string>
     <string name="rolls_left">Rolls left:</string>
     <string name="total_score">Total Score:</string>
+    <string name="no_rolls">No rolls left!</string>
+    <string name="new_game">New Game!</string>
 
     <string-array name="spinner_selections">
         <item>Low: Count all dice 3 and less: </item>

@@ -1,6 +1,6 @@
 package com.example.dawa1.thirty;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class ScoreFragment extends Fragment {
     private final String SCORE_BOARD = "mScoreHolder";
 
     private TextView mTotalScoreText;
+    private Button mNewGameButton;
 
     private ListView mScoreHolder;
     private ArrayList<Integer> mScoreList;
@@ -41,11 +43,22 @@ public class ScoreFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_score, container, false);
-
         setScoreList(v);
         setTotalScore(v);
+        setButtons(v);
 
         return v;
+    }
+
+    private void setButtons(View v) {
+        mNewGameButton = (Button) v.findViewById(R.id.new_game_button);
+        mNewGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), GameActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setScoreList(View v) {

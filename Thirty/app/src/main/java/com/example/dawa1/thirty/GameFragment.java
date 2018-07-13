@@ -109,7 +109,7 @@ public class GameFragment extends Fragment {
                 if (rollsLeft()) {
                     mDice.rollDice();
                     mRollsLeft--;
-                    Toast.makeText(getContext(), mRollsLeft + ((mRollsLeft == 1) ? " roll left!" : " rolls left!"), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), mRollsLeft + ((mRollsLeft == 1) ? " roll left!" : " rolls left!"), Toast.LENGTH_SHORT).show();
                 }
                 updateBoard();
             }
@@ -119,9 +119,10 @@ public class GameFragment extends Fragment {
         mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Spelaren är nöjd och vill inte rulla mera
-                //Gör en knapp för att bekräfta
-                // Ej implementerat
+                if (mRollsLeft < MAX_ROLLS) {
+                    mRollsLeft = 0;
+                    updateBoard();
+                }
             }
         });
 
@@ -140,11 +141,14 @@ public class GameFragment extends Fragment {
             mRollButton.setEnabled(true);
             mSkipButton.setEnabled(true);
             mCalculateScoreButton.setEnabled(false);
+            mRollButton.setText(getResources().getString(R.string.roll_dice) + " " + mRollsLeft
+                    + ((mRollsLeft == 1) ? " roll left!" : " rolls left!"));
         }
         if (!rollsLeft()){
             mRollButton.setEnabled(false);
             mSkipButton.setEnabled(false);
             mCalculateScoreButton.setEnabled(true);
+            mRollButton.setText(R.string.no_rolls);
         }
     }
 
@@ -240,8 +244,10 @@ public class GameFragment extends Fragment {
             mDiceImageViewList.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDice.changeLock(index);
-                    updateDice();
+                    if (mRollsLeft < 3) {
+                        mDice.changeLock(index);
+                        updateDice();
+                    }
                 }
             });
         }

@@ -1,7 +1,6 @@
 package com.example.dawa1.thirty;
 
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class GameActivity extends SingleFragmentActivity {
@@ -14,7 +13,7 @@ public class GameActivity extends SingleFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
+        setContentView(com.example.dawa1.thirty.R.layout.activity_fragment);
 
         createFragment();
 

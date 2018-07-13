@@ -176,7 +176,9 @@ public class Dice {
         // om man valt low representerar det spinnerIndex = 0 -> countValue = 0 + offset;
         if (countValue == offset) {
             for (int i = 0; i < size; i++) {
-                totalValue += dieValues[i];
+                if (dieValues[i] <= countValue) {
+                    totalValue += dieValues[i];
+                }
             }
             return totalValue;
         } else {
