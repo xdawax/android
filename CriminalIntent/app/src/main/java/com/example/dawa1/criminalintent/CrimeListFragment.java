@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.util.List;
+import java.util.UUID;
 
 public class CrimeListFragment extends Fragment{
 
@@ -30,18 +30,28 @@ public class CrimeListFragment extends Fragment{
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+
         updateUI();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
     }
 
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
-
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -68,7 +78,8 @@ public class CrimeListFragment extends Fragment{
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getActivity(), CrimeActivity.class);
+            UUID getTemp = mCrime.getId();
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
         }
     }
