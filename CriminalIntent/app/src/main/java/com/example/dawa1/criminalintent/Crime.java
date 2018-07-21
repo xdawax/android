@@ -1,7 +1,12 @@
 package com.example.dawa1.criminalintent;
 
+import java.text.DateFormat;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.Date;
+
+import static android.icu.text.DateFormat.LONG;
+import static android.icu.text.DateFormat.SHORT;
 
 public class Crime {
 
